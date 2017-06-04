@@ -1,0 +1,24 @@
+{
+  "short_name": "Feeddeck",
+  "name": "Feeddeck",
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "icons": [
+    {
+      "src": "some-icon.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "some-icon2x.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "some-icon4x.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "index.html"
+}

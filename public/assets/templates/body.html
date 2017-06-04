@@ -1,0 +1,10 @@
+<body>
+  <h1>
+    Welcome to the FeedReader
+  </h1>
+  <div>
+    {{
+      yield P(it.columns.then(columns => columns.map((i) => '<div>' + i.name + '</div>').join('')));
+    }}
+  </div>
+</body>
