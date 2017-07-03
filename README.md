@@ -5,6 +5,19 @@ Inspired by River of news, but HTTPs only and a PWA.
 
 Attempt to create a PWA that is a news reader that renders on the server and on the client using all the same templating and logic. 
 
+
+Progress
+--------
+
+* Client logic in SW is now shared with the Server logic
+* Templating is done via streaming templates
+* Use WhatWG streams in node.
+* Need to clean up a lot.
+
+
+Thoughts
+--------
+
 If possible the server logic and the client logic should be near exactly the same.
 
 Ideally configured via a OPML file that defines the columns, that links to other OPML files that contain the feeds that should be aggregrated in this.
