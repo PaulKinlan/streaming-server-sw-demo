@@ -2,9 +2,9 @@
   <h1>
     Welcome to the FeedReader
   </h1>
-  <div>
+  <main>
     {{
-      yield P(it.columns.then(columns => columns.map((i) => '<div>' + i.name + '</div>').join('')));
+    yield P(it.columns.then(columns => columns.map((i) => '<section><h1><a href="' + i.href + '">' + i.name + '</a></h1><div data-url="' +  i.feedUrl  + '"></div></section>').join('')));
     }}
-  </div>
+  </main>
 </body>

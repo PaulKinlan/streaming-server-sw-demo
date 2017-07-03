@@ -4,7 +4,9 @@ importScripts(`/scripts/router.js${cacheBust}`);
 importScripts(`/scripts/dot.js${cacheBust}`);
 importScripts(`/scripts/platform/web.js${cacheBust}`);
 importScripts(`/scripts/platform/common.js${cacheBust}`);
-importScripts(`/scripts/routes/root.js${cacheBust}`)
+importScripts(`/scripts/routes/index.js${cacheBust}`);
+importScripts(`/scripts/routes/root.js${cacheBust}`);
+importScripts(`/scripts/routes/proxy.js${cacheBust}`);
 
 const assetPath = '/assets/';
 const dataPath = '/data/'
@@ -38,6 +40,13 @@ getCompiledTemplate(`${assetPath}templates/body.html`);
   Router logic.
 */
 
-router.get(`${self.location.origin}/`, (e) => {
-  e.respondWith(root(dataPath, assetPath));
+// The proxy server '/proxy'
+router.get(`${self.location.origin}/proxy`, (e) => {
+  e.respondWith(routes['proxy'](dataPath, assetPath, e.request));
 }, {urlMatchProperty: 'href'});
+
+// The root '/'
+router.get(`${self.location.origin}/$`, (e) => {
+  e.respondWith(routes['root'](dataPath, assetPath));
+}, {urlMatchProperty: 'href'});
+

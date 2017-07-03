@@ -1,4 +1,3 @@
-
 const root = (dataPath, assetPath) => {
   
   let columnData = loadData(`${dataPath}columns.json`).then(r => r.json());
@@ -19,6 +18,9 @@ const root = (dataPath, assetPath) => {
                 .then(() => new Response(concatStream.readable, { status: "200" }))
 }
 
+
+
+
 if (typeof module !== 'undefined' && module.exports) {
   var platform = require('../../scripts/platform/node.js');
   var common = require('../../scripts/platform/common.js');
@@ -31,6 +33,9 @@ if (typeof module !== 'undefined' && module.exports) {
   var Response = fetch.Response;
   
   module.exports = {
-    root: root
+    handler: root
   }
+}
+else {
+  routes['root'] = root;
 }
