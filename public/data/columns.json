@@ -13,5 +13,10 @@
     "name": "Jake Archibald",
     "href": "https://jakearchibald.com/",
     "feedUrl": "https://jakearchibald.com/posts.rss"
+  },
+  {
+    "name": "Web Fundamentals",
+    "href": "https://developers.google.com/web/updates",
+    "feedUrl": "https://developers.google.com/web/updates/rss.xml"
   }
 ]

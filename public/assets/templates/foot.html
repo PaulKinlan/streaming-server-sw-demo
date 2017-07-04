@@ -1,6 +1,7 @@
 <template id='itemTemplate'>
-  <div>
-    <h3 data-bind_inner-text='title'></h3>
+  <div class="item" data-bind_id='guid'>
+    <h3><span data-bind_inner-text='title'></span> (<a data-bind_href='link'>#</a>)</h3>
+    <div data-bind_inner-text='pubDate'></div>
   </div>
 </template>
 <script>
@@ -39,8 +40,9 @@ const convertRSSItemToJSON = (item) => {
   const guid = getElementText("guid");
   const pubDate = getElementText("pubDate");
   const author = getElementText("author");
+  const link = getElementText("link");
   
-  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author};
+  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
 };
   
 window.addEventListener('DOMContentLoaded', e => {
