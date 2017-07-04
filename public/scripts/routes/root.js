@@ -8,6 +8,13 @@ const root = (dataPath, assetPath) => {
                      }));
   const footStream = loadTemplate(`${assetPath}templates/foot.html`);
 
+  /*
+   * Render the head from the cache or network
+   * Render the body.
+     * Body has template that brings in config to work out what to render
+     * TODO: If we have data cached let's bring that in.
+   * Render the footer - contains JS to data bind client request.
+  */
 
   let concatStream = new ConcatStream;
   return headStream.then(stream => stream.pipeTo(concatStream.writable, { preventClose:true }))
