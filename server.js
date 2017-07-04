@@ -18,6 +18,7 @@ app.all('*', (req, res, next) => {
   }
 });
 
+getCompiledTemplate(`${assetPath}templates/head.html`);
 getCompiledTemplate(`${assetPath}templates/body.html`);
 
 app.get('/', (req, res, next) => {
@@ -27,9 +28,8 @@ app.get('/', (req, res, next) => {
 
 app.get('/proxy', (req, res, next) => {
   routes['proxy'](dataPath, assetPath, req)
-    .then(response => response.body.pipe(res));
+    .then(response => response.body.pipe(res, {end: true}));
 })
-
 
 /*
   Start the app.

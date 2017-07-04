@@ -1,8 +1,11 @@
 const root = (dataPath, assetPath) => {
   
   let columnData = loadData(`${dataPath}columns.json`).then(r => r.json());
+  let headTemplate = getCompiledTemplate(`${assetPath}templates/head.html`);
   let bodyTemplate = getCompiledTemplate(`${assetPath}templates/body.html`);
-  const headStream = loadTemplate(`${assetPath}templates/head.html`);
+  const headStream = headTemplate.then(renderFunction => renderFunction({
+                       columns: columnData
+                     }));
   const bodyStream = bodyTemplate.then(renderFunction => renderFunction({
                        columns: columnData
                      }));
