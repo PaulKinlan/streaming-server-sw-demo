@@ -5,7 +5,32 @@ const proxyHandler = (dataPath, assetPath, request) => {
     Todo: Handle some caching here.
   */ 
   const url = parseUrl(request);
-  return fetch(url);
+  
+  var fetchPromise = fetch(url).then(networkResponse => {
+    const chain = Promise.resolve(networkResponse.clone());
+    
+    if(networkResponse.ok)
+      return caches.open('data')
+           .then(cache => cache.put(request, networkResponse))
+           .then(_ => chain);
+    return chain;
+  }).catch(error => {
+    console.log("Fetch Error", error);
+    throw error;
+  });  
+  
+  return caches.open('data').then(cache => {
+    // There is no cache, just hit the network.
+    if (cache === undefined) return fetchPromise;
+    
+    return cache.match(request.clone()).then(response => {
+      // Return the cache or the fetch if not there.
+      return response || fetchPromise;
+    });
+  }).catch(error => {
+    console.log("Error in SW", error);
+    throw error;
+  });
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -20,6 +45,13 @@ if (typeof module !== 'undefined' && module.exports) {
   var Response = fetch.Response;
   
   var parseUrl = request => request.query.url;
+  
+  // Really need a Cache API on the server.....
+  caches = new (function() {
+    this.open = () => {
+      return Promise.resolve();
+    };
+  });
   
   module.exports = {
     handler: proxyHandler
