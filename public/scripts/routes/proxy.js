@@ -6,14 +6,12 @@ const proxyHandler = (dataPath, assetPath, request) => {
   */ 
   const url = parseUrl(request);
   
-  var fetchPromise = fetch(url).then(networkResponse => {
-    const chain = Promise.resolve(networkResponse.clone());
-    
+  var fetchPromise = fetch(url).then(networkResponse => {    
     if(networkResponse.ok)
       return caches.open('data')
-           .then(cache => cache.put(request, networkResponse))
-           .then(_ => chain);
-    return chain;
+           .then(cache => (!!cache) ? cache.put(request, networkResponse.clone()) : undefined)
+           .then(_ => networkResponse);
+    return networkResponse;
   }).catch(error => {
     console.log("Fetch Error", error);
     throw error;
@@ -49,7 +47,7 @@ if (typeof module !== 'undefined' && module.exports) {
   // Really need a Cache API on the server.....
   caches = new (function() {
     this.open = () => {
-      return Promise.resolve();
+      return Promise.resolve(undefined);
     };
   });
   
