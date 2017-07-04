@@ -19,8 +19,21 @@
       }
     </script>
     <style>
+      
+      main {
+        display: flex;
+        overflow: auto;
+      }
+      
       main section {
-        
+        min-width: 240px;
+      }
+      
+      @media screen and (max-width: 460px) {
+        main {
+          display: block;
+          overflow: initial;
+        }
       }
       
       main section h1 {
