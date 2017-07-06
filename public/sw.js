@@ -1,12 +1,13 @@
 /* VERSION: 0.0.1 */
 const cacheBust = '?' + Date.now(); // dirty hack for the install phase... saves me versioning at buildtime... if SW dies then this doesn't work as well...don't judge me
-importScripts(`/scripts/router.js${cacheBust}`);
-importScripts(`/scripts/dot.js${cacheBust}`);
-importScripts(`/scripts/platform/web.js${cacheBust}`);
-importScripts(`/scripts/platform/common.js${cacheBust}`);
-importScripts(`/scripts/routes/index.js${cacheBust}`);
-importScripts(`/scripts/routes/root.js${cacheBust}`);
-importScripts(`/scripts/routes/proxy.js${cacheBust}`);
+importScripts(`/scripts/router.js`);
+importScripts(`/scripts/dot.js`);
+importScripts(`/scripts/xml-parser.js`);
+importScripts(`/scripts/platform/web.js`);
+importScripts(`/scripts/platform/common.js`);
+importScripts(`/scripts/routes/index.js`);
+importScripts(`/scripts/routes/root.js`);
+importScripts(`/scripts/routes/proxy.js`);
 
 const assetPath = '/assets/';
 const dataPath = '/data/'
@@ -16,7 +17,7 @@ var assetsToCache = [
   `${assetPath}templates/head.html`,
   `${assetPath}templates/foot.html`,
   `${assetPath}templates/body.html`,
-];
+]; 
 
 self.addEventListener('install', (e) => {
   // Perform install steps

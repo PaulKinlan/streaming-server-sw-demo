@@ -12,8 +12,6 @@ const TransformStream = require('../../../private/streams/transform-stream.js').
 /*
   This file is basically me futzing about with Streams between Node and WhatWG
 */
-
-
 function streamToString(stream) {
   const reader = stream.getReader();
   let buffer = new Uint8Array();
@@ -64,7 +62,6 @@ const sendStream = (stream, last, res) => {
   });
 };
 
-
 const nodeReadStreamToWhatWGReadableStream = (stream) => {
     
   return new ReadableStream({
@@ -84,20 +81,25 @@ class FromWhatWGReadableStream extends Readable {
   constructor(options, whatwgStream) {
     super(options);
     const streamReader = whatwgStream.getReader();
+    const outStream = this;
     
-    pump(this);
-
-    function pump(outStream) {
+    function pump() {
       return streamReader.read().then(({ value, done }) => {
         if (done) {
           outStream.push(null);
           return;
         }
-
+      
         outStream.push(value.toString());
-        return pump(outStream);
+        return pump();
       });
     }
+    
+    pump();
+  }
+  
+  _read(size) {
+    
   }
 }
 
@@ -113,14 +115,14 @@ function compileTemplate(path) {
   return loadTemplate(path)
     .then(stream => streamToString(stream))
     .then(template => {
-      const f = doT.compile(template, {node: true});
+      const f = doT.compile(template, {node: true, evaluate: /\$\$(([^\$]+|\\.)+)\$\$/g});
       return (data) => nodeReadStreamToWhatWGReadableStream(f(data));
     });
 }
 
-const responseToExpressStream = (expressResponse, fetchResponse) => {
-  const stream = new FromWhatWGReadableStream({}, fetchResponse.body);
-  sendStream(stream, true, expressResponse);
+const responseToExpressStream = (expressResponse, fetchResponseStream) => {
+  const stream = new FromWhatWGReadableStream({}, fetchResponseStream);
+  stream.pipe(expressResponse, {end:true});
 };
 
 module.exports = {

@@ -30,5 +30,5 @@ var loadData = (path) => {
 function compileTemplate(path) {
   return loadTemplate(path)
     .then(stream => streamToString(stream))
-    .then(template => doT.compile(template, {node: false}));
+    .then(template => doT.compile(template, {node: false, evaluate: /\$\$(([^\$]+|\\.)+)\$\$/g}));
 }

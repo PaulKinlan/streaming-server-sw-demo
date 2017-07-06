@@ -1,8 +1,6 @@
 const proxyHandler = (dataPath, assetPath, request) => {
   /* 
     Go out to the networks.
-    
-    Todo: Handle some caching here.
   */ 
   const url = parseUrl(request);
   

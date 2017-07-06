@@ -27,14 +27,13 @@ If possible the server logic and the client logic should be near exactly the sam
 Ideally configured via a OPML file that defines the columns, that links to other OPML files that contain the feeds that should be aggregrated in this.
 
 Thoughts: 
-*  The UI should render the structure without JS. Ideally after this has been
-  rendered, I can stream in the first batch of aggreagated and merged feeds.
-  
-*  The UI should then take over and update the feeds in the client as much as 
+
+* The UI should render the structure without JS. Ideally after this has been
+  rendered, I can stream in the first batch of aggreagated and merged feeds.  
+* The UI should then take over and update the feeds in the client as much as 
   possible.
-  
-*  On reload, the server should not be hit at all, save for any updates to the
-   OPML file. In an ideal world, the SW would be doing the work.
+* On reload, the server should not be hit at all, save for any updates to the
+  OPML file. In an ideal world, the SW would be doing the work.
   
   
 Technical hitches:

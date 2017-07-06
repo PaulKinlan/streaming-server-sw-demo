@@ -4,9 +4,6 @@
     <title>Feed Deck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="/manifest.json">
-    {{
-    yield P(it.columns.then(columns => columns.map((i) => '<link rel="preload" href="/proxy?url=' + i.feedUrl + '" as="fetch">').join('')));
-    }}
     <meta name="theme-color" content="#fff">
     <script>
       if ('serviceWorker' in navigator) {
@@ -66,8 +63,6 @@
         margin: 0 0 0.8em 0;
         font-family: sans-serif;
         font-weight: 300;
-      }
-      
+      }     
     </style>
   </head>
-  
