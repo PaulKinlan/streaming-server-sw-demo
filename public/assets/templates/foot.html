@@ -58,6 +58,7 @@ window.addEventListener('DOMContentLoaded', e => {
       })
       .then(doc => doc.querySelectorAll('item'))
       .then(items => Array.prototype.map.call(items, item => convertRSSItemToJSON(item)))
+      .then(items => items.filter(item => !!!(document.getElementById(item.guid))))
       .then(items => items.map(item => applyTemplate(itemTemplate.cloneNode(true), item)))
       .then(items => items.forEach(item => column.appendChild(item)))
   }

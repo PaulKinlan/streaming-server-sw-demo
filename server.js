@@ -16,23 +16,25 @@ app.all('*', (req, res, next) => {
   } else {
     res.redirect('https://' + req.hostname + req.url);
   }
-});
+});          
 
 getCompiledTemplate(`${assetPath}templates/head.html`);
 getCompiledTemplate(`${assetPath}templates/body.html`);
 
 app.get('/', (req, res, next) => {
   routes['root'](dataPath, assetPath)
-    .then(response => node.responseToExpressStream(res, response));         
-});
+    .then(response => {
+      node.responseToExpressStream(res, response.body)
+    });         
+});  
 
 app.get('/proxy', (req, res, next) => {
   routes['proxy'](dataPath, assetPath, req)
     .then(response => response.body.pipe(res, {end: true}));
-})
+});       
 
 /*
-  Start the app.
+  Start the app 
 */
 app.use(express.static('public'));
 app.listen(8080);
