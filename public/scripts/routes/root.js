@@ -96,7 +96,8 @@ const convertRSSItemsToJSON = (item) => {
     return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
   } 
   
-  const xmlDom = parse(item);  
+  const xmlDom = parse(item);
+  if(xmlDom.root === undefined) return [];
   const itemNodes = findAllNodes(xmlDom.root, 'item');
   const nodes = [];
   

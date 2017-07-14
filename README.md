@@ -14,9 +14,10 @@ Progress
 * Use WhatWG streams in node. [done]
 * Need to clean up a lot. [errrr.....]
 * Configuration file should really be an OPML file. [todo]
-* Cache fetched data on the client and server [todo]
+* Cache fetched data on the client and server [done]
 * To render the client it still needs JS turned on. Investigate server 
   load of RSS feeds.
+  * This is done in the SW, will use on Server soon.
 
 
 Thoughts
