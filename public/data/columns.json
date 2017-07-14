@@ -18,5 +18,45 @@
     "name": "Web Fundamentals",
     "href": "https://developers.google.com/web/updates",
     "feedUrl": "https://developers.google.com/web/updates/rss.xml"
+  },
+  {
+    "name": "Rob Dodson (Medium)",
+    "href": "https://medium.com/@robdodson",
+    "feedUrl": "https://medium.com/feed/@robdodson"
+  },
+  {
+    "name": "Addy Osmani (Medium)",
+    "href": "https://medium.com/@addyosmani",
+    "feedUrl": "https://medium.com/feed/@addyosmani"
+  },
+  {
+    "name": "Sam Thorogood (Medium)",
+    "href": "https://medium.com/@samthor",
+    "feedUrl": "https://medium.com/feed/@samthor"
+  },
+  {
+    "name": "Andre Bandarra (Medium)",
+    "href": "https://medium.com/@andreban",
+    "feedUrl": "https://medium.com/feed/@andreban"
+  },
+  {
+    "name": "Mustafa Kurtuldu (Medium)",
+    "href": "https://medium.com/@mustafa_x",
+    "feedUrl": "https://medium.com/feed/@mustafa_x"
+  },
+  {
+    "name": "Dave Gash (Medium)",
+    "href": "https://medium.com/@davidagash",
+    "feedUrl": "https://medium.com/feed/@davidagash"
+  },
+  {
+    "name": "Matt Gaunt (Medium)",
+    "href": "https://medium.com/@gauntface",
+    "feedUrl": "https://medium.com/feed/@gauntface"
+  },
+  {
+    "name": "Alex Russell (Medium)",
+    "href": "https://medium.com/@slightlylate",
+    "feedUrl": "https://medium.com/feed/@slightlylate"
   }
 ]
