@@ -1,5 +1,10 @@
 [
   {
+    "name": "Chrome Releases",
+    "href": "https://chromereleases.googleblog.com/",
+    "feedUrl": "https://chromereleases.googleblog.com/feeds/posts/default?alt=rss"
+  },
+  {
     "name": "Paul Kinlan",
     "href": "https://paul.kinlan.me/",
     "feedUrl": "https://paul.kinlan.me/index.xml"

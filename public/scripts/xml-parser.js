@@ -25,6 +25,7 @@ function parse(xml) {
   function document() {
     return {
       declaration: declaration(),
+      processingInstructions: processingInstructions(),
       root: tag()
     }
   }
@@ -52,6 +53,30 @@ function parse(xml) {
     match(/\?>\s*/);
 
     return node;
+  }
+  
+  function processingInstructions() {
+    var nodes = [];
+    
+    while(match(/^<\?xml\s*/)) {
+      // tag
+      var node = {
+        attributes: {}
+      };
+
+      // attributes
+      while (!(eos() || is('?>'))) {
+        var attr = attribute();
+        if (!attr) return node;
+        node.attributes[attr.name] = attr.value;
+      }
+
+      match(/\?>\s*/);
+      
+      nodes.push(node);
+    }
+    
+    return nodes;
   }
 
   /**
