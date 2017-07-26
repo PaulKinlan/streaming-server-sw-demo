@@ -30,6 +30,8 @@
       main section {
         min-width: 240px;
         max-width: 240px;
+        font-size: 0.8em;
+        margin: 0 5px;
       }
       
       @media screen and (max-width: 460px) {
@@ -42,6 +44,10 @@
           min-width: 100%;
           max-width: 100%;
         }
+        
+        main section div[data-url] {
+          margin: initial; 
+        }
       }
       
       main section h1 {
@@ -51,6 +57,8 @@
       
       main section div[data-url] {
         /* Container */
+        font-size: 0.8em;
+        margin: 0 5px;
       }
       
       main section div.item {

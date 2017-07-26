@@ -39,16 +39,89 @@ const fetchCachedFeedData = (columnData, itemTemplate) => {
   // Return a promise that resolves to a map of column id => cached data.
   const resolveCache = (cache, url) => (!!cache) ? cache.match(new Request(url)).then(response => (!!response) ? response.text() : undefined) : Promise.resolve();
   const mapColumnsToCache = (cache, columns) => columns.map(column => [column, resolveCache(cache, `https://feeddeck.glitch.me/proxy?url=${column.feedUrl}`)]);
-  const mapCacheToTemplate = (columns) => columns.map(column => [column[0], column[1].then(items => convertRSSItemsToJSON(items))]);
+  const mapCacheToTemplate = (columns) => columns.map(column => [column[0], column[1].then(items => convertFeedItemsToJSON(items))]);
     
   return caches.open('data')
       .then(cache => columnData.then(columns => mapColumnsToCache(cache, columns)))
       .then(columns => mapCacheToTemplate(columns));
 };
 
-const convertRSSItemsToJSON = (item) => {
+const convertFeedItemsToJSON = (item) => {
   if(item == undefined) return;
   
+  const xmlDom = parse(item);
+  if(xmlDom.root === undefined) return [];
+  
+  if(xmlDom.root.name === 'feed') return convertAtomItemsToJSON(xmlDom.root);
+  else if(xmlDom.root.name === 'rss') return convertRSSItemsToJSON(xmlDom.root);
+  
+  return [];
+};
+
+const convertAtomItemsToJSON = (root) => {
+  const findNode = (root, tagName) => {
+    // depth first search.
+    if(root.name === tagName) {
+      return root;
+    }
+    else {
+      for(let node of root.children) {
+        let foundNode = findNode(node, tagName);
+        if(foundNode != null) return foundNode;
+      }
+      
+      return null;
+    }
+  };
+  
+  const findAllNodes = (root, tagName) => {
+    // depth first search.
+    let nodes = [];
+    
+    if(root.name === tagName) {
+      nodes.push(root);
+    }
+    
+    for(let node of root.children) {
+      nodes = nodes.concat(findAllNodes(node, tagName));
+    }
+    
+    return nodes
+  };
+  
+  const getElementText = (root, text) => {
+    let node = findNode(root, text);
+    if(node) return node.content;
+    return;
+  };
+  
+  const getElementAttribute = (root, element, attribute) => {
+    let node = findNode(root, element);
+    if(node && attribute in node.attributes) return node.attributes[attribute];
+    return;
+  }
+  
+  const createNode = (item) => {
+    const title = getElementText(item, "title");
+    const description = getElementText(item, "summary");
+    const guid = getElementText(item, "id");
+    const pubDate = getElementText(item, "updated");
+    const author = getElementText(item, "author");
+    const link = getElementAttribute(item, "link", "href");
+
+    return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+  } 
+  
+  const itemNodes = findAllNodes(root, 'entry');
+  const nodes = [];
+  
+  for(let node of itemNodes) {
+    nodes.push(createNode(node));
+  }
+  return nodes;
+};
+
+const convertRSSItemsToJSON = (root) => {
   const findNode = (root, tagName) => {
     // depth first search.
     if(root.name === tagName) {
@@ -96,9 +169,7 @@ const convertRSSItemsToJSON = (item) => {
     return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
   } 
   
-  const xmlDom = parse(item);
-  if(xmlDom.root === undefined) return [];
-  const itemNodes = findAllNodes(xmlDom.root, 'item');
+  const itemNodes = findAllNodes(root, 'item');
   const nodes = [];
   
   for(let node of itemNodes) {
