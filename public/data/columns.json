@@ -5,6 +5,11 @@
     "feedUrl": "https://chromereleases.googleblog.com/feeds/posts/default?alt=rss"
   },
   {
+    "name": "Webkit Blog",
+    "href": "https://webkit.org/blog/",
+    "feedUrl": "https://webkit.org/feed/"
+  },
+  {
     "name": "Paul Kinlan",
     "href": "https://paul.kinlan.me/",
     "feedUrl": "https://paul.kinlan.me/index.xml"

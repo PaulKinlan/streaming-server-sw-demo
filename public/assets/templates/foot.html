@@ -25,6 +25,47 @@ const applyTemplate = (templateElement, data) => {
   return element;
 };
   
+const convertFeedItemToJSON = (item) => {
+  if(item.nodeName === 'item') {
+    return convertRSSItemToJSON(item);
+  }
+  else if(item.nodeName === 'entry') {
+    return convertAtomItemToJSON(item);
+  }
+  else {
+    return [];
+  }
+}
+  
+const convertAtomItemToJSON = (item) => {
+  const getElementText = (tagName) => {
+    const elements = item.getElementsByTagName(tagName);
+    if(elements && elements.length > 0) {
+      return elements[0].textContent;
+    }
+    
+    return "";
+  } 
+  
+  const getElementAttribute = (tagName, attribute) => {
+    const elements = item.getElementsByTagName(tagName);
+    if(elements && elements.length > 0 && attribute in elements[0].attributes) {
+      return elements[0].attributes['href'];
+    }
+    
+    return "";
+  } 
+  
+  const title = getElementText("title");
+  const description = getElementText("summary");
+  const guid = getElementText("id");
+  const pubDate = getElementText("updated");
+  const author = getElementText("author");
+  const link = getElementAttribute("link")
+  
+  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+};
+  
 const convertRSSItemToJSON = (item) => {
   const getElementText = (tagName) => {
     const elements = item.getElementsByTagName(tagName);
@@ -56,8 +97,8 @@ window.addEventListener('DOMContentLoaded', e => {
         const parser = new DOMParser();
         return parser.parseFromString(feedText,'application/xml');
       })
-      .then(doc => doc.querySelectorAll('item'))
-      .then(items => Array.prototype.map.call(items, item => convertRSSItemToJSON(item)))
+      .then(doc => doc.querySelectorAll(doc.firstElementChild.nodeName === 'rss' ? 'item' : 'entry'))
+      .then(items => Array.prototype.map.call(items, item => convertFeedItemToJSON(item)))
       .then(items => items.filter(item => !!!(document.getElementById(item.guid))))
       .then(items => items.map(item => applyTemplate(itemTemplate.cloneNode(true), item)))
       .then(items => items.forEach(item => column.appendChild(item)))
