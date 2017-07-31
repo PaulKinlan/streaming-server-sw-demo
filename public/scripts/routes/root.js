@@ -46,144 +46,89 @@ const fetchCachedFeedData = (columnData, itemTemplate) => {
       .then(columns => mapCacheToTemplate(columns));
 };
 
-const convertFeedItemsToJSON = (item) => {
-  if(item == undefined) return;
-  
-  const xmlDom = parse(item);
-  if(xmlDom.root === undefined) return [];
-  
-  if(xmlDom.root.name === 'feed') return convertAtomItemsToJSON(xmlDom.root);
-  else if(xmlDom.root.name === 'rss') return convertRSSItemsToJSON(xmlDom.root);
-  
-  return [];
-};
+const findNode = (tagName, nodes) => {
+  return Array.prototype.find.call(nodes, n => n.tagName == tagName);
+}
 
-const convertAtomItemsToJSON = (root) => {
-  const findNode = (root, tagName) => {
-    // depth first search.
-    if(root.name === tagName) {
-      return root;
-    }
-    else {
-      for(let node of root.children) {
-        let foundNode = findNode(node, tagName);
-        if(foundNode != null) return foundNode;
-      }
-      
-      return null;
-    }
-  };
+const findNodes = (tagName, nodes) => {
+  return Array.prototype.filter.call(nodes, n => n.tagName == tagName);
+}
   
-  const findAllNodes = (root, tagName) => {
-    // depth first search.
-    let nodes = [];
-    
-    if(root.name === tagName) {
-      nodes.push(root);
-    }
-    
-    for(let node of root.children) {
-      nodes = nodes.concat(findAllNodes(node, tagName));
-    }
-    
-    return nodes
-  };
+const convertFeedItemsToJSON = (feedText) => {
+  if(feedText === undefined) return [];
   
-  const getElementText = (root, text) => {
-    let node = findNode(root, text);
-    if(node) return node.content;
-    return;
-  };
-  
-  const getElementAttribute = (root, element, attribute) => {
-    let node = findNode(root, element);
-    if(node && attribute in node.attributes) return node.attributes[attribute];
-    return;
+  const parser = new DOMParser();
+  const feed = parser.parseFromString(feedText,'application/xml');
+  const documentElement = feed.documentElement;
+    
+  if(documentElement.nodeName === 'rss') {
+    const channel = findNode('channel', documentElement.childNodes);
+    const items = findNodes('item', channel.childNodes);
+    return items.map(item => convertRSSItemToJSON(item));
   }
+  else if(documentElement.nodeName === 'feed') {
+    const entrys = findNodes('entry', documentElement.childNodes);
+    return entrys.map(entry => convertAtomItemToJSON(entry));
+  }
+  else {
+    return [];
+  }
+}
   
-  const createNode = (item) => {
-    const title = getElementText(item, "title");
-    const description = getElementText(item, "summary");
-    const guid = getElementText(item, "id");
-    const pubDate = getElementText(item, "updated");
-    const author = getElementText(item, "author");
-    const link = getElementAttribute(item, "link", "href");
-
-    return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+const convertAtomItemToJSON = (item) => {
+  const getElementText = (tagName) => {
+    const elements = findNodes(tagName, item.childNodes);
+    if(elements && elements.length > 0) {
+      return elements[0].textContent;
+    }
+    
+    return "";
   } 
   
-  const itemNodes = findAllNodes(root, 'entry');
-  const nodes = [];
-  
-  for(let node of itemNodes) {
-    nodes.push(createNode(node));
-  }
-  return nodes;
-};
-
-const convertRSSItemsToJSON = (root) => {
-  const findNode = (root, tagName) => {
-    // depth first search.
-    if(root.name === tagName) {
-      return root;
-    }
-    else {
-      for(let node of root.children) {
-        let foundNode = findNode(node, tagName);
-        if(foundNode != null) return foundNode;
-      }
-      
-      return null;
-    }
-  };
-  
-  const findAllNodes = (root, tagName) => {
-    // depth first search.
-    let nodes = [];
-    
-    if(root.name === tagName) {
-      nodes.push(root);
+  const getElementAttribute = (tagName, attribute) => {
+    const elements = findNodes(tagName, item.childNodes);
+    if(elements && elements.length > 0 && attribute in elements[0].attributes) {
+      return elements[0].attributes['href'];
     }
     
-    for(let node of root.children) {
-      nodes = nodes.concat(findAllNodes(node, tagName));
-    }
-    
-    return nodes
-  };
-  
-  const getElementText = (root, text) => {
-    let node = findNode(root, text);
-    if(node) return node.content;
-    return;
-  };
-  
-  const createNode = (item) => {
-    const title = getElementText(item, "title");
-    const description = getElementText(item, "description");
-    const guid = getElementText(item, "guid");
-    const pubDate = getElementText(item, "pubDate");
-    const author = getElementText(item, "author");
-    const link = getElementText(item, "link");
-
-    return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+    return "";
   } 
   
-  const itemNodes = findAllNodes(root, 'item');
-  const nodes = [];
+  const title = getElementText("title");
+  const description = getElementText("summary");
+  const guid = getElementText("id");
+  const pubDate = getElementText("updated");
+  const author = getElementText("author");
+  const link = getElementAttribute("link")
   
-  for(let node of itemNodes) {
-    nodes.push(createNode(node));
-  }
-  return nodes;
+  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+};
+  
+const convertRSSItemToJSON = (item) => {
+  const getElementText = (tagName) => {
+    const elements = findNodes(tagName, item.childNodes);
+    if(elements && elements.length > 0) {
+      return elements[0].textContent;
+    }
+    
+    return "";
+  } 
+  
+  const title = getElementText("title");
+  const description = getElementText("description");
+  const guid = getElementText("guid");
+  const pubDate = getElementText("pubDate");
+  const author = getElementText("author");
+  const link = getElementText("link");
+  
+  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
 };
 
-
+let DOMParser = require('xmldom-alpha').DOMParser;
 
 if (typeof module !== 'undefined' && module.exports) {
   var platform = require('../../scripts/platform/node.js');
   var common = require('../../scripts/platform/common.js');
-  var parse = require('../xml-parser.js').parse; //loaded like this because I need it in SW
   var loadTemplate = platform.loadTemplate;  
   var loadData = platform.loadData;
   var getCompiledTemplate = common.getCompiledTemplate;
