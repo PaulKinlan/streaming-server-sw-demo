@@ -49,8 +49,8 @@ const convertAtomItemToJSON = (item) => {
   
   const getElementAttribute = (tagName, attribute) => {
     const elements = item.getElementsByTagName(tagName);
-    if(elements && elements.length > 0 && attribute in elements[0].attributes) {
-      return elements[0].attributes['href'];
+    if(elements && elements.length > 0 && elements[0].attributes['href']) {
+      return elements[0].attributes['href'].value;
     }
     
     return "";
@@ -61,7 +61,7 @@ const convertAtomItemToJSON = (item) => {
   const guid = getElementText("id");
   const pubDate = getElementText("updated");
   const author = getElementText("author");
-  const link = getElementAttribute("link")
+  const link = getElementAttribute("link", "href");
   
   return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
 };

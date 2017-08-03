@@ -38,7 +38,7 @@ const root = (dataPath, assetPath) => {
 const fetchCachedFeedData = (columnData, itemTemplate) => {
   // Return a promise that resolves to a map of column id => cached data.
   const resolveCache = (cache, url) => (!!cache) ? cache.match(new Request(url)).then(response => (!!response) ? response.text() : undefined) : Promise.resolve();
-  const mapColumnsToCache = (cache, columns) => columns.map(column => [column, resolveCache(cache, `https://feeddeck.glitch.me/proxy?url=${column.feedUrl}`)]);
+  const mapColumnsToCache = (cache, columns) => columns.map(column => [column, resolveCache(cache, `https://chromestatus-deck.glitch.me/proxy?url=${column.feedUrl}`)]);
   const mapCacheToTemplate = (columns) => columns.map(column => [column[0], column[1].then(items => convertFeedItemsToJSON(items))]);
     
   return caches.open('data')
@@ -52,6 +52,15 @@ const findNode = (tagName, nodes) => {
 
 const findNodes = (tagName, nodes) => {
   return Array.prototype.filter.call(nodes, n => n.tagName == tagName);
+}  
+
+const sanitize = (str) => {
+  const tagsToReplace = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;'
+  };
+  return str.replace(/[&<>]/g, (tag) => tagsToReplace[tag] || tag);
 }
   
 const convertFeedItemsToJSON = (feedText) => {
@@ -87,8 +96,9 @@ const convertAtomItemToJSON = (item) => {
   
   const getElementAttribute = (tagName, attribute) => {
     const elements = findNodes(tagName, item.childNodes);
-    if(elements && elements.length > 0 && attribute in elements[0].attributes) {
-      return elements[0].attributes['href'];
+    if(elements && elements.length > 0) {
+      const href = elements[0].attributes.getNamedItem('href');
+      return (href !== undefined) ? href.value : "";
     }
     
     return "";
@@ -99,9 +109,9 @@ const convertAtomItemToJSON = (item) => {
   const guid = getElementText("id");
   const pubDate = getElementText("updated");
   const author = getElementText("author");
-  const link = getElementAttribute("link")
+  const link = getElementAttribute("link", "href");
   
-  return {"title": title, "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
+  return {"title": sanitize(title), "guid": guid, "description": description, "pubDate": pubDate, "author": author, "link": link};
 };
   
 const convertRSSItemToJSON = (item) => {
